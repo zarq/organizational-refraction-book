@@ -16,6 +16,9 @@ book/
     interventions/  — Intervention efficacy evidence
     expert-interviews/     — Synthesized expert interview findings
 website/            — Website, marketing, and positioning content (CMO)
+  speaking/         — Speaking engagement copy and bios
+  (landing pages, hero copy, launch sequences, press kit, CMS content files)
+README.md           — This file
 ```
 
 ## Commit Practice
