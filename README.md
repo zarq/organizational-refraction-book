@@ -37,7 +37,7 @@ When committing book content:
 |------|--------|
 | Master outline | v1 complete |
 | Frontmatter (title page + TOC) | Complete |
-| Backmatter (bibliography + index) | In progress (ResearchLead, Copywriter) |
+| Backmatter (bibliography + index) | Complete (58 entries bibliography + index) |
 | Chapter 1 — The Strategy-Reality Gap | Draft v2 (corrected) |
 | Chapter 2 — What Existing Frameworks Get Right and Miss | Draft v2 (complete) |
 | Chapter 3 — The Physics of Organizational Refraction | Draft v1 (complete) |
