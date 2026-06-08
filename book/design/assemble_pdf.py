@@ -25,6 +25,20 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+# ── Font registration — Georgia (canonical body typeface per Brand Identity Guide v1.1)
+_FONT_DIR = Path("/System/Library/Fonts/Supplemental")
+for _name, _file in [
+    ("Georgia",             "Georgia.ttf"),
+    ("Georgia-Bold",        "Georgia Bold.ttf"),
+    ("Georgia-Italic",      "Georgia Italic.ttf"),
+    ("Georgia-BoldItalic",  "Georgia Bold Italic.ttf"),
+]:
+    _path = _FONT_DIR / _file
+    if _path.exists():
+        pdfmetrics.registerFont(TTFont(_name, str(_path)))
+BODY_FONT = "Georgia"
+BODY_FONT_ITALIC = "Georgia-Italic"
+
 # ── Paths ────────────────────────────────────────────────────────────────────
 
 BOOK_DIR = Path("/Users/ivo/.paperclip/instances/default/workspaces/4bcf9239-8440-41ec-90d8-aa4f472f0fa7/organizational-refraction-book")
@@ -44,15 +58,26 @@ MARGIN_RIGHT  = 0.75 * inch
 BODY_W = PAGE_W - MARGIN_LEFT - MARGIN_RIGHT
 BODY_H = PAGE_H - MARGIN_TOP - MARGIN_BOTTOM
 
-# ── Colour palette ────────────────────────────────────────────────────────────
+# ── Colour palette — canonical Brand Identity Guide v1.1 ─────────────────────
 
-NAVY    = colors.HexColor("#1A2744")
-GOLD    = colors.HexColor("#C4952A")
-BODY_BG = colors.HexColor("#F8F6F1")
-TEXT    = colors.HexColor("#1C1C1C")
-GREY    = colors.HexColor("#6B6B6B")
-LGREY   = colors.HexColor("#EEECE8")
-WHITE   = colors.white
+NAVY_DEEP   = colors.HexColor("#0D1B2E")  # Navy Deep  — primary dark bg
+NAVY_MID    = colors.HexColor("#16284B")  # Navy Mid   — secondary surfaces
+NAVY_LIGHT  = colors.HexColor("#20406E")  # Navy Light — diagrams, borders
+AMBER       = colors.HexColor("#D4860B")  # Amber      — accents, CTAs
+AMBER_LIGHT = colors.HexColor("#F0AC32")  # Amber Light — refracted-ray motif
+AMBER_PALE  = colors.HexColor("#FCE6A5")  # Amber Pale  — diagram labels
+WARM_WHITE  = colors.HexColor("#F5F3EE")  # Warm Off-White — page bg
+SLATE       = colors.HexColor("#78889A")  # Slate      — captions, secondary text
+NEAR_BLACK  = colors.HexColor("#2C2C2C")  # Near-Black — all body copy
+WHITE       = colors.white                # #FFFFFF
+
+# Convenience aliases used throughout the file
+NAVY    = NAVY_DEEP
+GOLD    = AMBER
+BODY_BG = WARM_WHITE
+TEXT    = NEAR_BLACK
+GREY    = SLATE
+LGREY   = colors.HexColor("#E8E5DF")
 
 # ── Chapter manifest ─────────────────────────────────────────────────────────
 
@@ -113,11 +138,11 @@ def S(name, **kw):
 
 STYLE = dict(
     body=S("body",
-           fontName="Times-Roman", fontSize=11.5, leading=18,
+           fontName=BODY_FONT, fontSize=12, leading=19.2,
            textColor=TEXT, alignment=TA_JUSTIFY,
            spaceAfter=8, firstLineIndent=0),
     body_indent=S("body_indent",
-           fontName="Times-Roman", fontSize=11.5, leading=18,
+           fontName=BODY_FONT, fontSize=12, leading=19.2,
            textColor=TEXT, alignment=TA_JUSTIFY,
            spaceAfter=8, firstLineIndent=22),
     h1=S("h1",
@@ -135,7 +160,7 @@ STYLE = dict(
          fontName="Helvetica-BoldOblique", fontSize=11.5, leading=16,
          textColor=GREY, spaceBefore=10, spaceAfter=4),
     pullquote=S("pullquote",
-                fontName="Times-Italic", fontSize=14, leading=22,
+                fontName=BODY_FONT_ITALIC, fontSize=14, leading=22,
                 textColor=NAVY, spaceBefore=16, spaceAfter=16,
                 leftIndent=24, rightIndent=24, alignment=TA_LEFT),
     caption=S("caption",
@@ -150,15 +175,15 @@ STYLE = dict(
                textColor=NAVY, spaceBefore=14, spaceAfter=2,
                leftIndent=0),
     toc_ch=S("toc_ch",
-             fontName="Times-Roman", fontSize=10.5, leading=16,
+             fontName=BODY_FONT, fontSize=10.5, leading=16,
              textColor=TEXT, spaceBefore=4, spaceAfter=0,
              leftIndent=12),
     toc_sub=S("toc_sub",
-              fontName="Times-Italic", fontSize=9.5, leading=14,
+              fontName=BODY_FONT_ITALIC, fontSize=9.5, leading=14,
               textColor=GREY, spaceBefore=0, spaceAfter=2,
               leftIndent=24),
     bib_entry=S("bib_entry",
-                fontName="Times-Roman", fontSize=10, leading=15,
+                fontName=BODY_FONT, fontSize=10, leading=15,
                 textColor=TEXT, spaceBefore=3, spaceAfter=0,
                 leftIndent=18, firstLineIndent=-18),
     bib_letter=S("bib_letter",
@@ -264,33 +289,49 @@ class ChapterOpener(Flowable):
             c.drawString(16, y - 8, sub)
 
     def _draw_ray(self, c, w, h):
-        """Draw a simple refraction light-ray motif in the upper-right of the opener."""
+        """Draw refraction light-ray motif per Brand Identity Guide v1.1."""
         import math
-        x0 = w - 10
-        y0 = h - 4
-        # boundary
+        # Organizational boundary — Navy Light fill, Amber border
         bx = w * 0.72
-        c.setStrokeColor(colors.HexColor("#FFFFFF22"))
-        c.setLineWidth(0.4)
-        c.line(bx, h, bx, 0)
-        # incident ray
+        bw = 6
+        c.setFillColor(NAVY_LIGHT)
+        c.rect(bx - bw / 2, 0, bw, h, fill=1, stroke=0)
+        c.setStrokeColor(AMBER)
+        c.setLineWidth(0.8)
+        c.line(bx - bw / 2, 0, bx - bw / 2, h)
+        c.line(bx + bw / 2, 0, bx + bw / 2, h)
+
+        # Geometry
         angle_i = 40 * math.pi / 180
-        ray_len = 1.4 * inch
-        x1 = bx - ray_len * math.cos(angle_i)
-        y1 = h * 0.68 + ray_len * math.sin(angle_i)
-        x2 = bx
-        y2 = h * 0.68
-        c.setStrokeColor(colors.HexColor("#FFFFFF88"))
-        c.setLineWidth(1.2)
-        c.line(x1, y1, x2, y2)
-        # refracted ray (steeper)
         angle_r = 25 * math.pi / 180
-        rx2 = bx + ray_len * math.cos(angle_r)
-        ry2 = h * 0.68 - ray_len * math.sin(angle_r)
-        c.setStrokeColor(GOLD)
-        c.setLineWidth(1.2)
+        ray_len = 1.4 * inch
+        x2, y2 = bx, h * 0.68
+
+        x1 = x2 - ray_len * math.cos(angle_i)
+        y1 = y2 + ray_len * math.sin(angle_i)
+        rx2 = x2 + ray_len * math.cos(angle_r)
+        ry2 = y2 - ray_len * math.sin(angle_r)
+
+        # Intended path — Slate dashed (#78889A) — where ray *would* continue unrefracted
+        ix2 = x2 + ray_len * math.cos(angle_i)
+        iy2 = y2 - ray_len * math.sin(angle_i)
+        c.setStrokeColor(SLATE)
+        c.setLineWidth(0.8)
+        c.setDash([4, 4], 0)
+        c.line(x2, y2, ix2, iy2)
+        c.setDash([], 0)
+
+        # Primary ray (strategy as designed) — solid White
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(1.4)
+        c.line(x1, y1, x2, y2)
+
+        # Refracted ray (strategy as delivered) — Amber Light
+        c.setStrokeColor(AMBER_LIGHT)
+        c.setLineWidth(1.4)
         c.line(x2, y2, rx2, ry2)
-        # small angle labels
+
+        # Angle labels
         c.setFillColor(colors.HexColor("#FFFFFF55"))
         c.setFont("Helvetica", 7)
         c.drawString(x2 - 36, y2 + 10, "θ₁")
@@ -335,34 +376,59 @@ class PartDivider(Flowable):
         self._draw_prism(c, w, h)
 
     def _draw_prism(self, c, w, h):
+        """Organizational-boundary prism motif — white incident, Amber refracted.
+        Replaces the former rainbow to stay compliant with Brand Identity Guide v1.1
+        (no third dominant color; Amber/Navy pairing only).
+        """
         import math
-        # A simple triangular prism outline in lower right
         cx, cy = w * 0.78, h * 0.28
         size = 0.9 * inch
+
+        # Triangular prism outline — Navy Light fill, Amber border
         pts = [
             (cx, cy + size),
-            (cx - size * math.cos(math.pi/6), cy - size * 0.5),
-            (cx + size * math.cos(math.pi/6), cy - size * 0.5),
+            (cx - size * math.cos(math.pi / 6), cy - size * 0.5),
+            (cx + size * math.cos(math.pi / 6), cy - size * 0.5),
         ]
-        c.setStrokeColor(colors.HexColor("#FFFFFF44"))
+        c.setFillColor(NAVY_LIGHT)
+        path = c.beginPath()
+        path.moveTo(*pts[0])
+        for pt in pts[1:]:
+            path.lineTo(*pt)
+        path.close()
+        c.drawPath(path, fill=1, stroke=0)
+
+        c.setStrokeColor(AMBER)
         c.setLineWidth(1)
         c.lines([(pts[0][0], pts[0][1], pts[1][0], pts[1][1]),
                  (pts[1][0], pts[1][1], pts[2][0], pts[2][1]),
                  (pts[2][0], pts[2][1], pts[0][0], pts[0][1])])
-        # rainbow rays through prism
-        spectrum = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF"]
-        for i, hx in enumerate(spectrum):
-            offset = (i - 1.5) * 6
-            x1 = cx - 1.4 * inch
-            y1 = cy + offset
-            xm = cx - size * 0.3
-            ym = cy + offset * 0.5
-            x2 = cx + 1.2 * inch
-            y2 = cy - 0.15 * inch + offset * 1.8
-            c.setStrokeColor(colors.HexColor(hx + "AA"))
-            c.setLineWidth(0.8)
-            c.line(x1, y1, xm, ym)
-            c.line(xm, ym, x2, y2)
+
+        # White incident ray from left
+        ix1 = cx - 1.4 * inch
+        iy1 = cy + size * 0.15
+        ixm = cx - size * 0.22
+        iym = cy + size * 0.05
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(1.2)
+        c.line(ix1, iy1, ixm, iym)
+
+        # Amber refracted ray exiting right (steeper angle)
+        rx1, ry1 = cx + size * 0.22, cy - size * 0.05
+        rx2 = cx + 1.2 * inch
+        ry2 = cy - size * 0.55
+        c.setStrokeColor(AMBER_LIGHT)
+        c.setLineWidth(1.2)
+        c.line(rx1, ry1, rx2, ry2)
+
+        # Dashed Slate intended-path (where ray would go unrefracted)
+        sx2 = cx + 1.2 * inch
+        sy2 = cy - size * 0.12
+        c.setStrokeColor(SLATE)
+        c.setLineWidth(0.7)
+        c.setDash([3, 4], 0)
+        c.line(rx1, ry1, sx2, sy2)
+        c.setDash([], 0)
 
 
 class DiagramPlaceholder(Flowable):
@@ -440,27 +506,37 @@ class DiagramPlaceholder(Flowable):
         w, h = self.width, self.height
         cx, cy = w / 2, h / 2
 
-        # two-layer refraction ray
+        # two-layer refraction ray — Brand Identity Guide v1.1 motif colors
         bx = cx
-        # incident
-        c.setStrokeColor(NAVY)
-        c.setLineWidth(2)
         angle_i = 38 * math.pi / 180
-        rl = 1.3 * inch
-        c.line(bx - rl * math.cos(angle_i), cy + rl * math.sin(angle_i), bx, cy)
-        # refracted
-        c.setStrokeColor(GOLD)
         angle_r = 22 * math.pi / 180
-        c.line(bx, cy, bx + rl * math.cos(angle_r), cy - rl * math.sin(angle_r))
-        # boundary
-        c.setStrokeColor(colors.HexColor("#AAAAAA"))
+        rl = 1.3 * inch
+        # Organizational boundary — Navy Light fill strip, Amber border
+        c.setFillColor(NAVY_LIGHT)
+        c.rect(bx - 10, 0, 20, h, fill=1, stroke=0)
+        c.setStrokeColor(AMBER)
         c.setLineWidth(0.6)
-        c.line(bx - 18, 0, bx - 18, h)
+        c.line(bx - 10, 0, bx - 10, h)
+        c.line(bx + 10, 0, bx + 10, h)
+        # Primary ray (strategy as designed) — White
+        c.setStrokeColor(WHITE)
+        c.setLineWidth(2)
+        c.line(bx - rl * math.cos(angle_i), cy + rl * math.sin(angle_i), bx, cy)
+        # Intended path — Slate dashed
+        c.setStrokeColor(SLATE)
+        c.setLineWidth(0.9)
+        c.setDash([4, 4], 0)
+        c.line(bx, cy, bx + rl * math.cos(angle_i), cy - rl * math.sin(angle_i))
+        c.setDash([], 0)
+        # Refracted ray (strategy as delivered) — Amber Light
+        c.setStrokeColor(AMBER_LIGHT)
+        c.setLineWidth(2)
+        c.line(bx, cy, bx + rl * math.cos(angle_r), cy - rl * math.sin(angle_r))
         # labels
         self._label(cx - rl * 0.6 * math.cos(angle_i), cy + rl * 0.6 * math.sin(angle_i) + 10,
                     "Intent", 8, colour=NAVY)
         self._label(cx + rl * 0.6 * math.cos(angle_r), cy - rl * 0.6 * math.sin(angle_r) - 12,
-                    "Outcome", 8, colour=GOLD)
+                    "Outcome", 8, colour=AMBER_LIGHT)
         self._label(cx, h - 14, f"Figure {self.ch_num}: Organizational Refraction", 8, colour=GREY)
 
     def _draw_strategy_reality_gap(self):
@@ -535,8 +611,8 @@ class DiagramPlaceholder(Flowable):
             density = layers.index((label, y)) + 1
             alpha = 30 + density * 16
             self._rect(w * 0.1, y, w * 0.6, bar_h,
-                       fill=colors.HexColor(f"#1A2744{alpha:02X}"),
-                       stroke=colors.HexColor("#1A2744"))
+                       fill=colors.HexColor(f"#0D1B2E{alpha:02X}"),
+                       stroke=NAVY_DEEP)
             self._label(w * 0.4, y + bar_h / 2 - 4, label, 9, bold=True, colour=WHITE)
 
         # intent signal arrow bending
@@ -575,7 +651,7 @@ class DiagramPlaceholder(Flowable):
             c.setLineWidth(1.5)
             c.line(w * 0.12, yi, bx - w * 0.22, yi)
             # absorbed ray (fades into medium)
-            c.setStrokeColor(colors.HexColor("#1A274422"))
+            c.setStrokeColor(colors.HexColor("#0D1B2E22"))
             c.setLineWidth(4)
             c.line(bx - w * 0.22, yi, bx + w * 0.05, yi)
             # tiny transmitted fraction
@@ -593,7 +669,7 @@ class DiagramPlaceholder(Flowable):
         w, h = self.width, self.height
         # Funnel: intent → metric → behavior
         stages = [
-            (w*0.15, h*0.72, w*0.14, h*0.26, "Strategic\nIntent", "#1A2744"),
+            (w*0.15, h*0.72, w*0.14, h*0.26, "Strategic\nIntent", "#0D1B2E"),
             (w*0.38, h*0.60, w*0.14, h*0.30, "Proxy\nMetric", "#C4952A"),
             (w*0.61, h*0.48, w*0.14, h*0.36, "Measured\nBehavior", "#6B6B6B"),
             (w*0.84, h*0.36, w*0.12, h*0.40, "Actual\nOutcome", "#8B3A3A"),
@@ -619,7 +695,7 @@ class DiagramPlaceholder(Flowable):
         w, h = self.width, self.height
         # Three coloured layers stacked horizontally
         layer_colours = [
-            ("#1A274466", "Hierarchical"),
+            ("#0D1B2E66", "Hierarchical"),
             ("#C4952A44", "Cultural"),
             ("#6B6B6B33", "Process"),
         ]
@@ -725,7 +801,7 @@ class DiagramPlaceholder(Flowable):
         cx, cy = w*0.5, h*0.52
         rx, ry = 0.55*inch, h*0.38
         # left arc
-        c.setFillColor(colors.HexColor("#1A274422"))
+        c.setFillColor(colors.HexColor("#0D1B2E22"))
         c.setStrokeColor(NAVY)
         c.setLineWidth(1.2)
         path = c.beginPath()
@@ -1165,7 +1241,7 @@ def _make_title_page(md_path):
     flowables.append(Paragraph(
         "<i>Why Your Strategy Arrives Somewhere It Was Never Aimed</i>",
         ParagraphStyle("subtitle_tp",
-                       fontName="Times-Italic", fontSize=14, leading=20,
+                       fontName=BODY_FONT_ITALIC, fontSize=14, leading=20,
                        textColor=TEXT, alignment=TA_CENTER, spaceAfter=30)))
 
     flowables.append(Spacer(1, 0.8 * inch))
@@ -1205,7 +1281,7 @@ def _make_title_page(md_path):
         if line:
             flowables.append(Paragraph(inline_markup(line),
                                        ParagraphStyle("copy_p",
-                                                      fontName="Times-Roman", fontSize=9,
+                                                      fontName=BODY_FONT, fontSize=9,
                                                       leading=14, textColor=GREY,
                                                       alignment=TA_LEFT, spaceAfter=2)))
         else:
@@ -1324,13 +1400,13 @@ def _make_index():
                 row_text = "  ".join(inline_markup(c) for c in cells)
                 flowables.append(Paragraph(row_text,
                                            ParagraphStyle("idx_entry",
-                                                          fontName="Times-Roman", fontSize=9.5,
+                                                          fontName=BODY_FONT, fontSize=9.5,
                                                           leading=15, textColor=TEXT,
                                                           spaceAfter=2)))
         else:
             flowables.append(Paragraph(inline_markup(line),
                                        ParagraphStyle("idx_line",
-                                                      fontName="Times-Roman", fontSize=9.5,
+                                                      fontName=BODY_FONT, fontSize=9.5,
                                                       leading=15, textColor=TEXT,
                                                       spaceAfter=2)))
 

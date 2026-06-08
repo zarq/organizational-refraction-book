@@ -1051,9 +1051,9 @@ def ch09():
     for i, (a, v) in enumerate(zip(angles[:-1], sample_vals[:-1])):
         ax.scatter(a, v, s=45, color=AL, zorder=6)
 
-    # Fill area — target profile
-    ax.fill(angles, target_vals, color='#2A7A2A', alpha=0.2)
-    ax.plot(angles, target_vals, color='#2A7A2A', lw=1.5, linestyle='--', zorder=5)
+    # Fill area — target profile (Slate = "intended path" per Brand Identity Guide v1.1)
+    ax.fill(angles, target_vals, color=SL, alpha=0.15)
+    ax.plot(angles, target_vals, color=SL, lw=1.5, linestyle='--', zorder=5)
 
     # Dimension labels
     for i, (angle, dim) in enumerate(zip(angles[:-1], dimensions)):
@@ -1076,7 +1076,7 @@ def ch09():
     # Legend
     legend_elements = [
         Line2D([0], [0], color=AL, lw=2.5, label='Organization profile'),
-        Line2D([0], [0], color='#2A7A2A', lw=1.5, linestyle='--', label='Target (low-refraction)'),
+        Line2D([0], [0], color=SL, lw=1.5, linestyle='--', label='Target (low-refraction)'),
     ]
     ax.legend(handles=legend_elements, loc='lower center',
               bbox_to_anchor=(0.5, -0.12), ncol=2,
@@ -1158,7 +1158,7 @@ def ch10():
 
     # ── With correction (bottom half) ──────────────────────────────────────
     ax.text(3.0, 2.1, 'WITH CORRECTIVE LENS (Intervention)', ha='center', va='top',
-            fontsize=7, color='#1A7A3C', fontweight='bold')
+            fontsize=7, color=AL, fontweight='bold')
 
     # Entry medium
     bx_bot1 = 1.8
@@ -1178,11 +1178,11 @@ def ch10():
         [bx_bot2 - 0.15, 1.85],
     ])
     lens_patch = Polygon(lens_pts, closed=True,
-                         facecolor='#2A5A2A', edgecolor='#3A9A3A', linewidth=1.5,
+                         facecolor=NL, edgecolor=AL, linewidth=1.5,
                          alpha=0.85, zorder=3)
     ax.add_patch(lens_patch)
     ax.text(bx_bot2, 1.95, 'CORRECTIVE\nINTERVENTION', ha='center', va='bottom',
-            fontsize=5.5, color='#3A9A3A', fontweight='bold', zorder=5)
+            fontsize=5.5, color=AL, fontweight='bold', zorder=5)
 
     # Incoming
     iix1, iiy1 = 0.3, py_bot + (bx_bot1-0.3)*math.tan(math.radians(theta_i))
@@ -1257,7 +1257,7 @@ def ch11():
         {
             'ax': axes[1],
             'title': 'LOW-REFRACTION\nORGANIZATION',
-            'title_color': '#1A7A3C',
+            'title_color': AL,
             'layers': [
                 ('LEADERSHIP', 1.3, 1.8),
                 ('TEAM LEADS', 1.15, 1.2),
@@ -1266,7 +1266,7 @@ def ch11():
             'n_vals': [1.0, 1.3, 1.15, 1.05],
             'theta_i': 20.0,
             'facecolor': '#141E2A',
-            'edgecolor': '#1A7A3C',
+            'edgecolor': AL,
         },
     ]
 
@@ -1337,7 +1337,7 @@ def ch11():
         # Final deviation
         fx, fy = points[-1]
         dev = abs(fx - int_end_x)
-        color_dev = '#C03030' if cfg['title_color'] == '#B82020' else '#1A9A4A'
+        color_dev = '#C03030' if cfg['title_color'] == '#B82020' else AL
         ax.text(1.5, 0.3, f'Deviation: {dev:.2f} units',
                 ha='center', va='top', fontsize=6.5, color=color_dev, fontweight='bold')
 
@@ -1386,7 +1386,7 @@ def ch12():
         (1.8, 2.5, 'CULTURE\nLENS', AL),
         (3.0, 2.5, 'ORGANIZATIONAL\nSYSTEM', NL),
         (4.2, 2.5, 'ALIGNMENT\nLENS', AL),
-        (5.5, 2.5, 'STRATEGIC\nIMPACT', '#3ADA3A'),
+        (5.5, 2.5, 'STRATEGIC\nIMPACT', AL),
     ]
 
     # Draw ray path
@@ -1407,7 +1407,7 @@ def ch12():
                 ey = cy + 0.35 * np.sin(angle)
                 ax.plot([cx, ex], [cy, ey], color=WH, lw=1.0, alpha=0.6, zorder=4)
         elif i == len(components)-1:  # Target — bullseye
-            for r, c in [(0.28, '#3ADA3A'), (0.18, BG), (0.08, '#3ADA3A')]:
+            for r, c in [(0.28, AL), (0.18, BG), (0.08, AL)]:
                 circle = plt.Circle((cx, cy), r, color=c, zorder=5, alpha=0.9)
                 ax.add_patch(circle)
         elif label in ['CULTURE\nLENS', 'ALIGNMENT\nLENS']:  # Lens shapes (biconvex)
