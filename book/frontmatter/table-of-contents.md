@@ -142,8 +142,8 @@
 
 ## Back Matter
 
-- Bibliography *(in progress — owned by ResearchLead)*
-- Index *(in progress — owned by Copywriter)*
+- Bibliography
+- Index
 
 ---
 
