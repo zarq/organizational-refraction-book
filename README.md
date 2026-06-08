@@ -9,6 +9,7 @@ This repository holds all working content for the book on organizational refract
 ```
 book/
   outline/          — Master outline with chapter synopses and research-gap register
+  frontmatter/      — Title page, copyright, table of contents
   chapters/         — Chapter drafts in progress
   research/
     case-studies/   — Primary and secondary case write-ups
@@ -35,6 +36,8 @@ When committing book content:
 | Item | Status |
 |------|--------|
 | Master outline | v1 complete |
+| Frontmatter (title page + TOC) | Complete |
+| Backmatter (bibliography + index) | In progress (ResearchLead, Copywriter) |
 | Chapter 1 — The Strategy-Reality Gap | Draft v2 (corrected) |
 | Chapter 2 — What Existing Frameworks Get Right and Miss | Draft v2 (complete) |
 | Chapter 3 — The Physics of Organizational Refraction | Draft v1 (complete) |
