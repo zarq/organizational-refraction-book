@@ -30,21 +30,31 @@ When committing book content:
 - One logical unit per commit (one chapter, one case study, one outline revision)
 - Add `Co-Authored-By: Paperclip <noreply@paperclip.ing>` to commit messages
 
-## Current Status (as of 2026-06-07)
+## Current Status (as of 2026-06-08)
 
 | Item | Status |
 |------|--------|
 | Master outline | v1 complete |
-| Chapter 1 — The Strategy-Reality Gap | Draft v1 (in review) |
+| Chapter 1 — The Strategy-Reality Gap | Draft v2 (corrected) |
 | Chapter 2 — What Existing Frameworks Get Right and Miss | Draft v2 (complete) |
-| Research: Nokia (Hierarchical Refraction) | In review |
-| Research: NASA Columbia (Compound Refraction) | In review |
-| Research: Kodak (Total Internal Reflection) | In review |
-| Research: DaimlerChrysler (Absorption) | In review |
-| Research: Secondary Cases (Boeing, AOL-TW, WaMu) | In review |
-| Research: G4 Positive-Correction Cases | In review |
-| Research: G5 Interventions & GE Unwind | In review |
-| Research: Expert Interview Synthesis | In review |
+| Chapter 3 — The Physics of Organizational Refraction | Draft v1 (complete) |
+| Chapter 4 — Hierarchical Refraction | Draft v1 (complete) |
+| Chapter 5 — Cultural Refraction | Draft v1 (complete) |
+| Chapter 6 — Process Refraction | Draft v1 (complete) |
+| Chapter 7 — When Layers Combine: Compound Refraction | Draft v1 (copyedited) |
+| Chapter 8 — Total Internal Reflection | Draft v1 (copyedited) |
+| Chapter 9 — Mapping Your Organization's Refractive Profile | Draft v1 (complete) |
+| Chapter 10 — Correcting the Angle: Interventions That Work | Draft v1 (copyedited) |
+| Chapter 11 — Designing Refraction-Resistant Organizations | Draft v1 (copyedited) |
+| Chapter 12 — Leadership as Optics Work | Draft v1.2 (enriched) |
+| Research: Nokia (Hierarchical Refraction) | Complete |
+| Research: NASA Columbia (Compound Refraction) | Complete |
+| Research: Kodak (Total Internal Reflection) | Complete |
+| Research: DaimlerChrysler (Absorption) | Complete |
+| Research: Secondary Cases (Boeing, AOL-TW, WaMu) | Complete |
+| Research: G4 Positive-Correction Cases | Complete |
+| Research: G5 Interventions & GE Unwind | Complete |
+| Research: Expert Interview Synthesis | Complete |
 
 ## Contacts
 
