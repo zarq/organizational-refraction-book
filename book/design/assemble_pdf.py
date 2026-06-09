@@ -41,8 +41,11 @@ BODY_FONT_ITALIC = "Georgia-Italic"
 
 # ── Paths ────────────────────────────────────────────────────────────────────
 
-BOOK_DIR = Path("/Users/ivo/.paperclip/instances/default/workspaces/4bcf9239-8440-41ec-90d8-aa4f472f0fa7/organizational-refraction-book")
-DESIGN_DIR = Path("/Users/ivo/.paperclip/instances/default/workspaces/b3012109-f748-42f7-a65b-dcf33846c24d/book-design")
+# Overridable via env vars for CI; defaults derive from this file's location.
+# File lives at book/design/assemble_pdf.py → parent.parent.parent = repo root.
+BOOK_DIR = Path(os.environ.get("BOOK_DIR", str(Path(__file__).resolve().parent.parent.parent)))
+# All design images (diagrams + cover) are committed under book/design in the repo.
+DESIGN_DIR = Path(os.environ.get("DESIGN_DIR", str(BOOK_DIR / "book" / "design")))
 OUT_DIR = BOOK_DIR / "book" / "pdf"
 OUT_DIR.mkdir(exist_ok=True)
 OUT_PATH = OUT_DIR / "organizational-refraction-DRAFT.pdf"

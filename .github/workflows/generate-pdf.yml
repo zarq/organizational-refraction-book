@@ -1,0 +1,65 @@
+# generate-pdf.yml
+#
+# Automatically assembles the Organizational Refraction book PDF whenever any
+# book content file is pushed to the repository.
+#
+# What it does:
+#   1. Installs Python 3.11 and the reportlab + Pillow dependencies.
+#   2. Runs book/design/assemble_pdf.py, which reads all chapter Markdown files,
+#      applies the publication layout, and writes book/pdf/organizational-refraction-DRAFT.pdf.
+#   3. Uploads the generated PDF as a downloadable workflow artifact (90-day retention).
+#
+# How to trigger manually:
+#   Go to Actions → "Generate Book PDF" → "Run workflow" → select branch → Run.
+#   This is useful for testing the build without pushing book content changes.
+#
+# Artifact:
+#   The generated PDF is available under the "Artifacts" section of each run.
+#   Name: organizational-refraction-draft-pdf
+#
+# Notes:
+#   - The script path overrides (BOOK_DIR, DESIGN_DIR) are set to the checked-out
+#     workspace so the script does not depend on local machine paths.
+#   - All images (chapter diagrams + cover) are committed under book/design/ in
+#     this repo, so no external assets are required.
+
+name: Generate Book PDF
+
+on:
+  push:
+    paths:
+      - 'book/**'
+      - '.github/workflows/generate-pdf.yml'
+  workflow_dispatch:
+
+jobs:
+  generate-pdf:
+    name: Assemble PDF
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python dependencies
+        run: pip install reportlab Pillow
+
+      - name: Generate PDF
+        env:
+          BOOK_DIR: ${{ github.workspace }}
+          DESIGN_DIR: ${{ github.workspace }}/book/design
+        run: python book/design/assemble_pdf.py
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: organizational-refraction-draft-pdf
+          path: book/pdf/organizational-refraction-DRAFT.pdf
+          retention-days: 90
+          if-no-files-found: error
